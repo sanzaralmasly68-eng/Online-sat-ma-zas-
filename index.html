@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LOST - Ayakkabı Mağazası</title>
+    <style>
+        :root {
+            --primary: #d4af37;
+            --primary-hover: #f3e5ab;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-light: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #333333;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark); color: var(--text-light); max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.8); padding-bottom: 70px; }
+        header { background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%); padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; }
+        .brand-logo { display: inline-flex; align-items: center; gap: 10px; }
+        .logo-emblem { width: 38px; height: 38px; background: linear-gradient(135deg, #d4af37, #8a7322); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; color: #000; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); border: 2px solid #fff; }
+        .brand-name { font-size: 24px; font-weight: 900; letter-spacing: 3px; color: var(--primary); text-transform: uppercase; }
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .header-btn { background: rgba(212, 175, 55, 0.2); border: 1px solid var(--primary); color: var(--primary); border-radius: 20px; padding: 6px 10px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .cart-btn { position: relative; background: var(--primary); color: #000; border: none; border-radius: 20px; padding: 6px 12px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .cart-badge { background: #ff1744; color: #fff; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; }
+        nav { display: flex; background-color: #000; border-bottom: 1px solid var(--border-color); }
+        .nav-tab { flex: 1; padding: 12px 5px; text-align: center; background: none; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.3s; border-bottom: 3px solid transparent; }
+        .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); background-color: rgba(212, 175, 55, 0.05); }
+        .tab-content { display: none; padding: 15px; }
+        .tab-content.active { display: block; }
+        .product-card { background-color: var(--card-bg); border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .product-slider-container { width: 100%; height: 220px; position: relative; overflow: hidden; }
+        .product-slider-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1s ease-in-out; }
+        .product-slider-img.active { opacity: 1; }
+        .product-info { padding: 15px; }
+        .product-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .product-price { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+        .option-group { margin-bottom: 12px; }
+        .option-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; display: block; }
+        .color-options { display: flex; gap: 8px; }
+        .color-btn { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; outline: none; }
+        .color-btn.selected { border-color: var(--primary); transform: scale(1.15); }
+        .size-options { display: flex; gap: 6px; flex-wrap: wrap; }
+        .size-btn { background-color: #2a2a2a; border: 1px solid var(--border-color); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .size-btn.selected { background-color: var(--primary); color: #000; font-weight: bold; border-color: var(--primary); }
+        .btn-add-cart { width: 100%; background: linear-gradient(135deg, #d4af37, #aa8c2c); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .btn-add-cart:active { transform: scale(0.98); }
+        .store-info { background-color: var(--card-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; }
+        .store-title { color: var(--primary); font-size: 16px; margin-bottom: 8px; font-weight: bold; }
+        .store-address { font-size: 14px; line-height: 1.4; color: #ddd; margin-bottom: 12px; }
+        .map-container { width: 100%; height: 220px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+        iframe { width: 100%; height: 100%; border: 0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto; padding: 20px 10px; }
+        .modal-content { background-color: var(--card-bg); max-width: 440px; margin: 0 auto; border-radius: 12px; padding: 20px; border: 1px solid var(--primary); position: relative; }
+        .close-btn { position: absolute; right: 15px; top: 15px; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: var(--primary); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; display: none; z-index: 2000; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+
+        /* SEPET, FORM, IBAN, FOOTER (eksik olan stiller) */
+        .cart-item-card { display: flex; align-items: center; gap: 10px; background: #2a2a2a; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; margin-bottom: 8px; }
+        .cart-item-img { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+        .cart-item-details { flex: 1; min-width: 0; }
+        .cart-item-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .cart-item-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .cart-item-price { font-size: 13px; font-weight: 800; color: var(--primary); }
+        .qty-controls { display: flex; align-items: center; gap: 6px; }
+        .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--primary); background: none; color: var(--primary); font-weight: bold; font-size: 14px; cursor: pointer; line-height: 1; }
+        .qty-num { font-size: 13px; min-width: 14px; text-align: center; }
+        .cart-total-box { display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; padding: 10px 0; border-top: 1px solid var(--border-color); }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .form-control { width: 100%; background: #2a2a2a; border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 6px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--primary); }
+        textarea.form-control { min-height: 70px; resize: vertical; }
+        .iban-box { background: #2a2a2a; border: 1px dashed var(--primary); border-radius: 8px; padding: 12px; text-align: center; margin: 12px 0; }
+        .iban-name { font-size: 13px; color: #ddd; margin-bottom: 6px; }
+        .iban-num { font-size: 14px; font-weight: 800; color: var(--primary); letter-spacing: 1px; word-break: break-all; margin-bottom: 8px; }
+        .btn-copy { background: var(--primary); color: #000; border: none; border-radius: 6px; padding: 6px 14px; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .warning-text { color: #ff8a80; font-size: 12px; text-align: center; margin-bottom: 12px; font-weight: 600; }
+        .btn-whatsapp { width: 100%; background: #25d366; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; }
+        .btn-whatsapp:active { transform: scale(0.98); }
+        footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; display: flex; background: #000; border-top: 2px solid var(--primary); z-index: 90; }
+        .footer-item { flex: 1; text-align: center; padding: 14px 5px; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+        .footer-item.active { color: var(--primary); }
+
+        /* MARKA AMBLEMLERİ */
+        .brand-bar { display: flex; gap: 10px; overflow-x: auto; padding: 10px 15px; background: #0a0a0a; border-bottom: 1px solid var(--border-color); }
+        .brand-bar::-webkit-scrollbar { display: none; }
+        .brand-chip { flex: 0 0 auto; width: 60px; text-align: center; background: none; border: none; color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer; }
+        .brand-chip .emblem { width: 48px; height: 48px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; border: 2px solid transparent; overflow: hidden; color: #000; font-weight: 900; font-size: 13px; }
+        .brand-chip .emblem svg { width: 32px; height: 32px; }
+        .brand-chip .emblem img { width: 100%; height: 100%; object-fit: contain; }
+        .brand-chip.active { color: var(--primary); }
+        .brand-chip.active .emblem { border-color: var(--primary); box-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
+        /* SOSYAL MEDYA & İLETİŞİM */
+        .social-bar { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .social-title { color: var(--primary); font-size: 14px; font-weight: bold; text-align: center; }
+        .social-row { display: flex; gap: 10px; }
+        .btn-social { flex: 1; text-align: center; padding: 12px 6px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; color: #fff; border: none; cursor: pointer; }
+        .btn-insta { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
+        .btn-tiktok { background: #000; border: 1px solid #fff; }
+        .btn-help { background: #25d366; color: #000; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="none"><source src="Nilüfer  - Çok Uzaklarda - KARAOKE.aac" type="audio/mpeg"></audio>
+    <div id="toast" class="toast"></div>
+
+    <header>
+        <div class="brand-logo">
+            <div class="logo-emblem">L</div>
+            <div class="brand-name">LOST</div>
+        </div>
+        <div class="header-actions">
+            <button class="header-btn" onclick="toggleMusic()">🎵 <span id="musicText">Müzik Aç</span></button>
+            <button class="cart-btn" onclick="openCartModal()">🛒 Sepet <span class="cart-badge" id="cartBadge">0</span></button>
+        </div>
+    </header>
+
+    <nav>
+        <button class="nav-tab active" onclick="switchTab('men')">Erkek</button>
+        <button class="nav-tab" onclick="switchTab('women')">Kadın</button>
+        <button class="nav-tab" onclick="switchTab('kids')">Çocuk</button>
+        <button class="nav-tab" onclick="switchTab('store')">Mağaza</button>
+    </nav>
+
+    <div class="brand-bar" id="brandBar">
+        <button class="brand-chip active" data-brand="all" onclick="filterBrand('all', this)"><div class="emblem">👟</div>Tümü</button>
+        <button class="brand-chip" data-brand="nike" onclick="filterBrand('nike', this)"><div class="emblem"><svg viewBox="0 0 100 40"><path d="M4 24 C10 30 20 28 32 22 L96 2 C70 16 48 30 28 34 C14 37 6 32 4 24 Z" fill="#000"/></svg></div>Nike</button>
+        <button class="brand-chip" data-brand="adidas" onclick="filterBrand('adidas', this)"><div class="emblem"><svg viewBox="0 0 38 30"><polygon points="3,26 9,26 11.5,19 5.5,19" fill="#000"/><polygon points="12,26 18,26 23,12 17,12" fill="#000"/><polygon points="21,26 27,26 34.5,5 28.5,5" fill="#000"/></svg></div>Adidas</button>
+        <button class="brand-chip" data-brand="newbalance" onclick="filterBrand('newbalance', this)"><div class="emblem">NB</div>New Balance</button>
+        <button class="brand-chip" data-brand="vans" onclick="filterBrand('vans', this)"><div class="emblem" style="font-size:11px">VANS</div>Vans</button>
+        <button class="brand-chip" data-brand="lacoste" onclick="filterBrand('lacoste', this)"><div class="emblem" style="font-size:11px">LAC</div>Lacoste</button>
+        <button class="brand-chip" data-brand="calvin" onclick="filterBrand('calvin', this)"><div class="emblem">CK</div>Calvin Klein</button>
+        <button class="brand-chip" data-brand="armani" onclick="filterBrand('armani', this)"><div class="emblem">EA7</div>Armani</button>
+        <button class="brand-chip" data-brand="mcqueen" onclick="filterBrand('mcqueen', this)"><div class="emblem" style="font-size:11px">AMQ</div>McQueen</button>
+        <button class="brand-chip" data-brand="zara" onclick="filterBrand('zara', this)"><div class="emblem" style="font-size:11px">ZARA</div>Zara</button>
+        <button class="brand-chip" data-brand="derimod" onclick="filterBrand('derimod', this)"><div class="emblem">DM</div>Derimod</button>
+    </div>
+
+    <!-- ================= ERKEK SEKMESİ ================= -->
+    <div id="men" class="tab-content active">
+
+        <!-- Ürün 1 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A1 r.jpg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A2 r.jpg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A3 r.jpg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A5 r.jpg" class="product-slider-img" alt="Taban Açısı">
+                <img src="A4 r.jpg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Alexander McQueen siyah Oversized Larry sneaker modeli</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Alexander McQueen siyah Oversized Larry sneaker modeli', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 2 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A6 r.jpg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A7 r.jpg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A8 r.jpg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A9 r.jpg" class="product-slider-img" alt="Yan Açı">
+                <img src="A10 r.jpg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">EA7 Emporio Armani</div>
+                <div class="product-price">1.899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                        <button class="size-btn" onclick="selectSize(this, '45')">45</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'EA7 Emporio Armani', 1899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 3 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A11 r.jpg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A12 r.jpg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A13 r.jpg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A14 r.jpg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Adidas</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Adidas', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 4 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A15 r.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A16 r.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A17 r.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A18 r.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="A19 r.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="A20 r.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="A21 r.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A22 r.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A23 r.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Air Force</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                        <button class="color-btn" style="background:#F5F5DC; border-color:#ccc" onclick="selectColor(this, 'Bej')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Air Force 1', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 5 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A25 r.jpeg" class="product-slider-img active" alt="Üst Görünüm">
+                <img src="A26 r.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A27 r.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="A28 r.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Adidas Terrex Agrevic GTX</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Adidas Terrex Agrevic GTX', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 6 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A29 r.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A30 r.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A31 r.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A32 r.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="A33 r.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Lacoste Elite Active</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Lacoste Elite Active', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 7 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B7.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B8.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B9.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B10.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="B5.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="B6.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Derimod Erkek siyah Bağcıklı kalın tabanlı hakiki Deri Sneaker kışlık spor ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Derimod Erkek siyah Bağcıklı kalın tabanlı hakiki Deri Sneaker kışlık spor ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 8 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B7.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B8.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B9.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B10.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="B11.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="B12.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Initator Unisex günlük spor ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Initator Unisex günlük spor ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 9 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B13.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B14.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B15.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B16.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Calvin Klein Classic Cupsole Leceup siyah erkek spor ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Calvin Klein Classic Cupsole Leceup siyah erkek spor ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 10 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B21.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B22.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B23.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B24.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="B25.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">ZARA Kışlık ayakkabı Unisex</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Zara Kışlık ayakkabı Unisex', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 11 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="Z1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Z2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z4.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z6.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="Z7.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z8.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z9.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z11.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z12.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="Z13.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z14.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z15.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">SAMBA Adidas çeşitleri</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Samba Adidas çeşitleri', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 12 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="M1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="M2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="M3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="M4.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="M5.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Adidas erkek koşu ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Adidas erkek koşu ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 13 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="Z1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Z2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z4.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z5.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Z6.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="Z7.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z8.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z9.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Z11.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Z12.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="Z13.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z14.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z15.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Adidas SAMBA</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Adidas SAMBA', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+        <!-- Ürün 14 -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="L1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="L2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="L3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="L4.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="L5.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="L6.jpeg" class="product-slider-img" alt="Ön Görünüm">
+                <img src="L7.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="L8.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="L9.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="L10.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Spor ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Spor ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- KADIN AYAKKABILARI -->
+    <div id="women" class="tab-content">
+
+        <!-- Kadın Ürün -->
+        <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="A1 r.jpg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="A2 r.jpg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="A3 r.jpg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="A5 r.jpg" class="product-slider-img" alt="Taban Açısı">
+                <img src="A4 r.jpg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Alexander McQueen siyah Oversized Larry sneaker modeli Unisex</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Alexander McQueen siyah Oversized Larry sneaker modeli', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+    <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B7.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B8.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B9.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B10.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="B11.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="B12.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Initator Unisex günlük spor ayakkabı</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Initator Unisex günlük spor ayakkabı', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+ <div class="product-card" data-slider-id="slider1">
+            <div class="product-slider-container">
+                <img src="B21.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="B22.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="B23.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="B24.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="B25.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">ZARA Kışlık ayakkabı Unisex</div>
+                <div class="product-price">1.549 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '40')">40</button>
+                        <button class="size-btn" onclick="selectSize(this, '41')">41</button>
+                        <button class="size-btn" onclick="selectSize(this, '42')">42</button>
+                        <button class="size-btn" onclick="selectSize(this, '43')">43</button>
+                        <button class="size-btn" onclick="selectSize(this, '44')">44</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Zara Kışlık ayakkabı Unisex', 1549)">Sepete Ekle</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ÇOCUK AYAKKABILARI -->
+    <div id="kids" class="tab-content">
+
+        <!-- Çocuk Ürün -->
+        <div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="H1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="H2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="H3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="H4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="H5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                 <img src="H6.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="H7.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Air Jordan 4 retro erkek ayakkabı</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Air Jordan 4 retro erkek ayakkabı', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="R1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="R2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="R3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="R4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="R5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                 <img src="R6.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Vans Hylane Unisex</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Vans Hylane Unisex', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="Z16.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Z17.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z18.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z19.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike İnitiator erkek spor ayakkabı</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike İnitiator erkek spor ayakkabı', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="Z20.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Z21.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z22.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z23.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Z24.jpeg" class="product-slider-img" alt="Taban Açısı">
+                 <img src="Z25.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">Nike Dunk Low GS çocuk günlük ayakkabı</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'Nike Dunk Low GS çocuk günlük ayakkabı', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="Z26.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Z27.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Z28.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Z29.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Z30.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">NİKE Court brough mid çocuk ayakkabı</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'NİKE Court brough mid çocuk ayakkabı', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="U1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="U2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="U3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="U4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="U5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                 <img src="U6.jpeg" class="product-slider-img" alt="Yan Açı">
+                 <img src="U7.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="U8.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="U9.jpeg" class="product-slider-img" alt="Taban Açısı">
+                 <img src="U10.jpeg" class="product-slider-img" alt="Yan Açı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">NİKE Dunk Low SE çocuk ayakkabı</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'NİKE Dunk Low SE çocuk ayakkabı', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="F1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="F2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="F3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="F4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="F5.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">NİKE Court brough mid çocuk ayakkabı UNİSEX</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'NİKE Court brough mid çocuk ayakkabı UNİSEX', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="Q1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Q2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Q3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Q4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Q5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Q6.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Q7.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Q8.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Q9.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">NEW BALANCE</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'NEW BALANCE', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+
+
+<div class="product-card" data-slider-id="slider4">
+            <div class="product-slider-container">
+                <img src="Ü1.jpeg" class="product-slider-img active" alt="Ön Görünüm">
+                <img src="Ü2.jpeg" class="product-slider-img" alt="Üst Görünüm">
+                <img src="Ü3.jpeg" class="product-slider-img" alt="Arka Görünüm">
+                <img src="Ü4.jpeg" class="product-slider-img" alt="Yan Açı">
+                <img src="Ü5.jpeg" class="product-slider-img" alt="Taban Açısı">
+                <img src="Ü6.jpeg" class="product-slider-img" alt="Taban Açısı">
+            </div>
+            <div class="product-info">
+                <div class="product-title">NİKE Air Max Plus</div>
+                <div class="product-price">899 TL</div>
+                <div class="option-group">
+                    <span class="option-label">Renk Seçiniz:</span>
+                    <div class="color-options">
+                        <button class="color-btn selected" style="background:#000" onclick="selectColor(this, 'Siyah')"></button>
+                        <button class="color-btn" style="background:#fff; border-color:#ccc" onclick="selectColor(this, 'Beyaz')"></button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Razmer (Numara) Seçiniz:</span>
+                    <div class="size-options">
+                        <button class="size-btn selected" onclick="selectSize(this, '28')">28</button>
+                        <button class="size-btn" onclick="selectSize(this, '29')">29</button>
+                        <button class="size-btn" onclick="selectSize(this, '30')">30</button>
+                        <button class="size-btn" onclick="selectSize(this, '31')">31</button>
+                        <button class="size-btn" onclick="selectSize(this, '32')">32</button>
+                    </div>
+                </div>
+                <button class="btn-add-cart" onclick="addToCart(this, 'NİKE Air Max Plus', 899)">Sepete Ekle</button>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- MAĞAZA ADRES & HARİTA SEKMESİ -->
+    <div id="store" class="tab-content">
+        <div class="store-info">
+            <div class="store-title">LOST Mağazamız</div>
+            <div class="store-address">
+                Karakaş Mahallesi, Cumhuriyet Caddesi No: 34<br>
+                LOST Giyim - Kırklareli / Merkez
+            </div>
+            <div class="map-container">
+                <iframe src="https://maps.google.com/maps?q=Karaka%C5%9F%20mahallesi%20cumhuriyet%20caddesi%20no%2034%20K%C4%B1rklareli&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOSYAL MEDYA & İLETİŞİM -->
+    <div class="social-bar">
+        <div class="social-title">Bizi Takip Edin</div>
+        <div class="social-row">
+            <a class="btn-social btn-insta" href="https://www.instagram.com/KULLANICI_ADI" target="_blank" rel="noopener">📷 Instagram</a>
+            <a class="btn-social btn-tiktok" href="https://www.tiktok.com/@KULLANICI_ADI" target="_blank" rel="noopener">🎬 TikTok</a>
+        </div>
+        <button class="btn-social btn-help" onclick="openHelpWhatsApp()">💬 İade &amp; Sorular (WhatsApp)</button>
+    </div>
+
+    <!-- SEPET & SİPARİŞ MODALİ -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeCartModal()">&times;</span>
+            <h3 style="color:var(--primary); margin-bottom:12px; font-size:16px; text-align:center;">ALIŞVERİŞ SEPETİNİZ</h3>
+
+            <div id="cartItemsList" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;"></div>
+
+            <div class="cart-total-box">
+                <span>Toplam Tutar:</span>
+                <span id="cartTotalPrice" style="color:var(--primary);">0 TL</span>
+            </div>
+
+            <h3 style="color:var(--primary); margin:15px 0 10px 0; font-size:14px; text-align:center; border-top:1px solid #333; padding-top:10px;">TESLİMAT & ADRES BİLGİLERİ</h3>
+
+            <div class="form-group">
+                <label>Ad Soyad:</label>
+                <input type="text" id="custName" class="form-control" placeholder="Adiniz ve Soyadiniz">
+            </div>
+            <div class="form-group">
+                <label>Telefon Numarası:</label>
+                <input type="tel" id="custPhone" class="form-control" placeholder="05XX XXX XX XX">
+            </div>
+            <div class="form-group">
+                <label>Kargo Firmasi Seçiniz:</label>
+                <select id="shippingCompany" class="form-control">
+                    <option value="Aras Kargo">Aras Kargo</option>
+                    <option value="PTT Kargo">PTT Kargo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>İl Seçiniz (81 İl):</label>
+                <select id="custCity" class="form-control">
+                    <option value="">İl Seçiniz</option>
+                    <option value="Adana">Adana</option><option value="Adiyaman">Adiyaman</option><option value="Afyonkarahisar">Afyonkarahisar</option><option value="Agri">Agri</option><option value="Amasya">Amasya</option><option value="Ankara">Ankara</option><option value="Antalya">Antalya</option><option value="Artvin">Artvin</option><option value="Aydin">Aydin</option><option value="Balikesir">Balikesir</option><option value="Bilecik">Bilecik</option><option value="Bingol">Bingol</option><option value="Bitlis">Bitlis</option><option value="Bolu">Bolu</option><option value="Burdur">Burdur</option><option value="Bursa">Bursa</option><option value="Çanakkale">Çanakkale</option><option value="Çankiri">Çankiri</option><option value="Çorum">Çorum</option><option value="Denizli">Denizli</option><option value="Diyarbakir">Diyarbakir</option><option value="Edirne">Edirne</option><option value="Elazig">Elazig</option><option value="Erzincan">Erzincan</option><option value="Erzurum">Erzurum</option><option value="Eskişehir">Eskişehir</option><option value="Gaziantep">Gaziantep</option><option value="Giresun">Giresun</option><option value="Gümüşhane">Gümüşhane</option><option value="Hakkari">Hakkari</option><option value="Hatay">Hatay</option><option value="Isparta">Isparta</option><option value="Mersin">Mersin</option><option value="İstanbul">İstanbul</option><option value="İzmir">İzmir</option><option value="Kars">Kars</option><option value="Kastamonu">Kastamonu</option><option value="Kayseri">Kayseri</option><option value="Kırklareli">Kırklareli</option><option value="Kırşehir">Kırşehir</option><option value="Kocaeli">Kocaeli</option><option value="Konya">Konya</option><option value="Kütahya">Kütahya</option><option value="Malatya">Malatya</option><option value="Manisa">Manisa</option><option value="Kahramanmaraş">Kahramanmaraş</option><option value="Mardin">Mardin</option><option value="Muğla">Muğla</option><option value="Muş">Muş</option><option value="Nevşehir">Nevşehir</option><option value="Niğde">Niğde</option><option value="Ordu">Ordu</option><option value="Rize">Rize</option><option value="Sakarya">Sakarya</option><option value="Samsun">Samsun</option><option value="Siirt">Siirt</option><option value="Sinop">Sinop</option><option value="Sivas">Sivas</option><option value="Tekirdağ">Tekirdağ</option><option value="Tokat">Tokat</option><option value="Trabzon">Trabzon</option><option value="Tunceli">Tunceli</option><option value="Şanlıurfa">Şanlıurfa</option><option value="Uşak">Uşak</option><option value="Van">Van</option><option value="Yozgat">Yozgat</option><option value="Zonguldak">Zonguldak</option><option value="Aksaray">Aksaray</option><option value="Bayburt">Bayburt</option><option value="Karaman">Karaman</option><option value="Kırıkkale">Kırıkkale</option><option value="Batman">Batman</option><option value="Şırnak">Şırnak</option><option value="Bartın">Bartın</option><option value="Ardahan">Ardahan</option><option value="Iğdır">Iğdır</option><option value="Yalova">Yalova</option><option value="Karabük">Karabük</option><option value="Kilis">Kilis</option><option value="Osmaniye">Osmaniye</option><option value="Düzce">Düzce</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>İlçe:</label>
+                <input type="text" id="custDistrict" class="form-control" placeholder="İlçe adi">
+            </div>
+            <div class="form-group">
+                <label>Açik Ev Adresi:</label>
+                <textarea id="custAddress" class="form-control" placeholder="Mahalle, Sokak, Bina No, Daire No"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Ödeme Durumu:</label>
+                <select id="paymentStatus" class="form-control">
+                    <option value="Dekontu bu mesajdan sonra WhatsApp'tan göndereceğim">Dekontu bu mesajdan sonra WhatsApp'tan göndereceğim</option>
+                    <option value="Ödemeyi sipariş onayından sonra yapacağım">Ödemeyi sipariş onayından sonra yapacağım</option>
+                </select>
+            </div>
+
+            <div class="iban-box">
+                <div class="iban-name">IBAN Sahibi: Yunus Çelik</div>
+                <div class="iban-num" id="ibanText">TR050006400000114000791885</div>
+                <button class="btn-copy" onclick="copyIban()">IBAN'i Kopyala</button>
+            </div>
+
+            <div class="warning-text">Lütfen dekontunuzu WhatsApp üzerinden gönderiniz!</div>
+
+            <button class="btn-whatsapp" onclick="sendWhatsApp()">Siparişi WhatsApp ile Gönder</button>
+        </div>
+    </div>
+
+    <!-- FOOTER NAV -->
+    <footer>
+        <div class="footer-item active" onclick="switchTab('men')"><span>Urunler</span></div>
+        <div class="footer-item" onclick="switchTab('store')"><span>Adres & Harita</span></div>
+    </footer>
+
+    <script>
+        let cart = [];
+        let isMusicPlaying = false;
+
+        // SLIDER: sadece ekranda görünen kartın resimleri döner (3 saniyede bir)
+        const sliderTimers = new Map();
+        document.addEventListener("DOMContentLoaded", function() {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const box = entry.target;
+                    const images = box.querySelectorAll('.product-slider-img');
+                    if (entry.isIntersecting && images.length > 1) {
+                        if (!sliderTimers.has(box)) {
+                            sliderTimers.set(box, setInterval(() => {
+                                let cur = Array.from(images).findIndex(i => i.classList.contains('active'));
+                                if (cur < 0) cur = 0;
+                                images[cur].classList.remove('active');
+                                images[(cur + 1) % images.length].classList.add('active');
+                            }, 3000));
+                        }
+                    } else if (sliderTimers.has(box)) {
+                        clearInterval(sliderTimers.get(box));
+                        sliderTimers.delete(box);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                const images = card.querySelectorAll('.product-slider-img');
+                images.forEach((img, i) => img.classList.toggle('active', i === 0));
+                card.dataset.brand = detectBrand(card.querySelector('.product-title').innerText);
+                const box = card.querySelector('.product-slider-container');
+                if (box) observer.observe(box);
+            });
+            updateBrandBar('men');
+            updateCartUI();
+        });
+
+        // MARKA TESPİTİ & FİLTRE
+        function detectBrand(title) {
+            const t = title.toLocaleLowerCase('tr-TR');
+            if (t.includes('mcqueen')) return 'mcqueen';
+            if (t.includes('armani') || t.includes('ea7')) return 'armani';
+            if (t.includes('adidas') || t.includes('samba')) return 'adidas';
+            if (t.includes('nike')) return 'nike';
+            if (t.includes('lacoste')) return 'lacoste';
+            if (t.includes('derimod')) return 'derimod';
+            if (t.includes('calvin')) return 'calvin';
+            if (t.includes('zara')) return 'zara';
+            if (t.includes('vans')) return 'vans';
+            if (t.includes('new balance')) return 'newbalance';
+            return 'diger';
+        }
+
+        function filterBrand(brand, chip) {
+            document.querySelectorAll('.brand-chip').forEach(c => c.classList.remove('active'));
+            if (chip) chip.classList.add('active');
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.style.display = (brand === 'all' || card.dataset.brand === brand) ? '' : 'none';
+            });
+        }
+
+        function updateBrandBar(tabId) {
+            const bar = document.getElementById('brandBar');
+            if (!bar) return;
+            if (tabId === 'store') { bar.style.display = 'none'; return; }
+            bar.style.display = 'flex';
+            bar.querySelectorAll('.brand-chip').forEach(chip => {
+                const b = chip.dataset.brand;
+                if (b === 'all') { chip.style.display = ''; return; }
+                const count = document.querySelectorAll('#' + tabId + ' .product-card[data-brand="' + b + '"]').length;
+                chip.style.display = count ? '' : 'none';
+            });
+            filterBrand('all', bar.querySelector('[data-brand="all"]'));
+            bar.scrollLeft = 0;
+        }
+
+        // İADE & SORULAR WHATSAPP
+        function openHelpWhatsApp() {
+            const msg = "Merhaba, iade / değişim ve sorularım hakkında bilgi almak istiyorum.";
+            window.open("https://wa.me/905010052934?text=" + encodeURIComponent(msg), '_blank');
+        }
+
+        // MÜZİK KONTROLÜ
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const text = document.getElementById('musicText');
+            if (!music) return;
+            if (isMusicPlaying) {
+                music.pause();
+                if (text) text.innerText = "Müzik Aç";
+                isMusicPlaying = false;
+            } else {
+                music.play().then(() => {
+                    if (text) text.innerText = "Müzik Kapat";
+                    isMusicPlaying = true;
+                }).catch(() => { console.log("Müzik çalma engellendi."); });
+            }
+        }
+
+        // TAB DEĞİŞTİRME
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.footer-item').forEach(el => el.classList.remove('active'));
+
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+
+            const tabs = ['men', 'women', 'kids', 'store'];
+            const index = tabs.indexOf(tabId);
+            const navTabs = document.querySelectorAll('.nav-tab');
+            if (index !== -1 && navTabs[index]) navTabs[index].classList.add('active');
+
+            const footerItems = document.querySelectorAll('.footer-item');
+            if (tabId === 'store') { if (footerItems[1]) footerItems[1].classList.add('active'); }
+            else if (footerItems[0]) footerItems[0].classList.add('active');
+
+            updateBrandBar(tabId);
+            window.scrollTo(0, 0);
+        }
+
+        // RENK SEÇİMİ
+        function selectColor(btn, colorName) {
+            const parent = btn.closest('.color-options');
+            if (parent) parent.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        // RAZMER SEÇİMİ
+        function selectSize(btn, sizeNum) {
+            const parent = btn.closest('.size-options');
+            if (parent) parent.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        // Secili rengin adini butonun onclick'inden okur (Kırmızı dahil tum renkler dogru gelir)
+        function getColorName(btn) {
+            if (!btn) return 'Siyah';
+            const m = (btn.getAttribute('onclick') || '').match(/selectColor\(this,\s*'([^']+)'\)/);
+            return m ? m[1] : 'Siyah';
+        }
+
+        // SEPETE EKLEME
+        function addToCart(btn, title, price) {
+            const card = btn.closest('.product-card');
+            const selectedColorBtn = card.querySelector('.color-btn.selected');
+            const selectedSizeBtn = card.querySelector('.size-btn.selected');
+
+            const activeImg = card.querySelector('.product-slider-img.active') || card.querySelector('.product-slider-img');
+            const image = activeImg ? activeImg.src : '';
+
+            const colorName = getColorName(selectedColorBtn);
+            const size = selectedSizeBtn ? selectedSizeBtn.innerText.trim() : '40';
+            price = Number(price) || 0;
+
+            const existingItem = cart.find(item => item.title === title && item.color === colorName && item.size === size);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ title: title, price: price, image: image, color: colorName, size: size, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast("Urun sepete eklendi!");
+        }
+
+        // SEPET GÖRÜNÜMÜNÜ GÜNCELLEME
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const listEl = document.getElementById('cartItemsList');
+            const totalEl = document.getElementById('cartTotalPrice');
+
+            let totalQty = 0;
+            let totalPrice = 0;
+            let html = '';
+
+            if (cart.length === 0) {
+                if (listEl) listEl.innerHTML = '<p style="text-align:center; color:#777; font-size:13px; padding:15px;">Sepetiniz boş</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    totalQty += item.qty;
+                    totalPrice += item.price * item.qty;
+                    html += `
+                        <div class="cart-item-card">
+                            <img src="${item.image}" class="cart-item-img" alt="">
+                            <div class="cart-item-details">
+                                <div class="cart-item-title">${item.title}</div>
+                                <div class="cart-item-sub">Renk: ${item.color} | Razmer: ${item.size}</div>
+                                <div class="cart-item-price">${item.price * item.qty} TL</div>
+                            </div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                                <span class="qty-num">${item.qty}</span>
+                                <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                            </div>
+                        </div>`;
+                });
+                if (listEl) listEl.innerHTML = html;
+            }
+
+            if (badge) badge.innerText = totalQty;
+            if (totalEl) totalEl.innerText = totalPrice + ' TL';
+        }
+
+        // MİKTAR ARTIRMA / EKSİLTME
+        function changeQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) cart.splice(index, 1);
+            updateCartUI();
+            if (cart.length === 0) closeCartModal();
+        }
+
+        // SEPET MODALİ AÇMA / KAPATMA
+        function openCartModal() {
+            if (cart.length === 0) {
+                alert("Sepetinizde ürün bulunmamaktadır!");
+                return;
+            }
+            const modal = document.getElementById('cartModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeCartModal() {
+            const modal = document.getElementById('cartModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // IBAN KOPYALAMA
+        function copyIban() {
+            const ibanEl = document.getElementById('ibanText');
+            if (!ibanEl) return;
+            const iban = ibanEl.innerText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(iban).then(() => showToast("IBAN Kopyalandi!")).catch(() => fallbackCopy(iban));
+            } else {
+                fallbackCopy(iban);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("IBAN Kopyalandi!");
+            } catch (err) {
+                alert("Kopyalanamadi.");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+
+        // WHATSAPP ÜZERİNDEN ÇOKLU ÜRÜN GÖNDERME
+        function sendWhatsApp() {
+            const val = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+            const name = val('custName');
+            const phone = val('custPhone');
+            const shipping = val('shippingCompany');
+            const city = val('custCity');
+            const district = val('custDistrict');
+            const address = val('custAddress');
+            const payment = val('paymentStatus');
+
+            if (cart.length === 0) {
+                alert("Sepetinizde ürün bulunmamaktadır!");
+                return;
+            }
+            if (!name || !phone || !city || !district || !address) {
+                alert("Lütfen tüm kargo ve adres bilgilerinizi eksiksiz doldurunuz!");
+                return;
+            }
+
+            const fmt = n => Number(n).toLocaleString('tr-TR');
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const orderNo = "LOST-" + pad(now.getDate()) + pad(now.getMonth() + 1) + now.getFullYear().toString().slice(-2) + "-" + pad(now.getHours()) + pad(now.getMinutes());
+            const dateText = pad(now.getDate()) + "." + pad(now.getMonth() + 1) + "." + now.getFullYear() + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+            const line = "━━━━━━━━━━━━━━━━━━";
+
+            let productsText = "";
+            let grandTotal = 0;
+            let totalQty = 0;
+
+            cart.forEach((item, idx) => {
+                const itemTotal = item.price * item.qty;
+                grandTotal += itemTotal;
+                totalQty += item.qty;
+                productsText +=
+"\n*" + (idx + 1) + ". " + item.title + "*\n" +
+"• Adet: " + item.qty + "\n" +
+"• Renk: " + item.color + "\n" +
+"• Numara: " + item.size + "\n" +
+"• Tutar: " + fmt(itemTotal) + " TL\n";
+                if (/^https?:\/\//i.test(item.image)) {
+                    productsText += "• Görsel: " + item.image + "\n";
+                }
+            });
+
+            const text =
+"*YENİ SİPARİŞ - LOST*\n" +
+"Sipariş No: *" + orderNo + "*\n" +
+"Tarih: " + dateText + "\n" +
+line + "\n" +
+"*ÜRÜNLER* (" + totalQty + " adet)\n" +
+productsText +
+line + "\n" +
+"*TOPLAM TUTAR: " + fmt(grandTotal) + " TL*\n" +
+line + "\n\n" +
+"*TESLİMAT BİLGİLERİ*\n" +
+"Alıcı: " + name + "\n" +
+"Telefon: " + phone + "\n" +
+"Kargo: " + shipping + "\n" +
+"İl / İlçe: " + city + " / " + district + "\n" +
+"Adres: " + address + "\n\n" +
+"*ÖDEME DURUMU*\n" +
+payment + "\n\n" +
+line + "\n" +
+"Siparişimi onaylamanızı ve kargoya verilmesini rica ederim. Teşekkürler.";
+
+            const targetPhone = "905010052934";
+            const whatsappUrl = "https://wa.me/" + targetPhone + "?text=" + encodeURIComponent(text);
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
